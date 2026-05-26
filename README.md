@@ -7,5 +7,5 @@ O código foi criado com o intúito de cadastrar livros, possuindo:
 // 5 - Buscar livro
 // 0 - Sair
 
-PÚBLICO ALVO - Estudantese leitores
+PÚBLICO ALVO - Estudantes e leitores
 
