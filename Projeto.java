@@ -2,7 +2,7 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Main {
+public class Projeto {
 
     // =========================
     // CLASSE LIVRO
@@ -157,9 +157,7 @@ public class Main {
         }
     }
 
-    // =========================
-    // MAIN
-    // =========================
+  
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
