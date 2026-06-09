@@ -1,91 +1,288 @@
-import json
-import os
-from datetime import datetime
 
-# Arquivo para armazenar usuários
-USUARIOS_FILE = "usuarios.json"
+import java.util.ArrayList;
+import java.util.Scanner;
 
-def carregar_usuarios():
-    """Carrega usuários do arquivo JSON"""
-    if os.path.exists(USUARIOS_FILE):
-        with open(USUARIOS_FILE, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    return {}
+public class Main {
 
-def salvar_usuarios(usuarios):
-    """Salva usuários no arquivo JSON"""
-    with open(USUARIOS_FILE, 'w', encoding='utf-8') as f:
-        json.dump(usuarios, f, indent=4, ensure_ascii=False)
+    // =========================
+    // CLASSE LIVRO
+    // =========================
+    static class Livro {
 
-def cadastro():
-    """Função para cadastrar um novo usuário"""
-    print("\n" + "="*50)
-    print("CADASTRO DE NOVO USUÁRIO")
-    print("="*50)
-    
-    usuarios = carregar_usuarios()
-    
-    nome = input("Nome: ").strip()
-    email = input("Email: ").strip()
-    senha = input("Senha: ").strip()
-    
-    if email in usuarios:
-        print("❌ Este email já está cadastrado!")
-        return
-    
-    usuarios[email] = {
-        "nome": nome,
-        "senha": senha,
-        "data_cadastro": datetime.now().strftime("%d/%m/%Y %H:%M")
+        private static int contador = 1;
+
+        private int id;
+        private String titulo;
+        private String autor;
+        private String genero;
+        private int ano;
+        private boolean disponivel;
+
+        public Livro(String titulo, String autor, String genero, int ano) {
+
+            this.id = contador++;
+            this.titulo = titulo;
+            this.autor = autor;
+            this.genero = genero;
+            this.ano = ano;
+            this.disponivel = true;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public String getTitulo() {
+            return titulo;
+        }
+
+        public void setTitulo(String titulo) {
+            this.titulo = titulo;
+        }
+
+        public String getAutor() {
+            return autor;
+        }
+
+        public void setAutor(String autor) {
+            this.autor = autor;
+        }
+
+        public String getGenero() {
+            return genero;
+        }
+
+        public void setGenero(String genero) {
+            this.genero = genero;
+        }
+
+        public int getAno() {
+            return ano;
+        }
+
+        public void setAno(int ano) {
+            this.ano = ano;
+        }
+
+        public boolean isDisponivel() {
+            return disponivel;
+        }
+
+        public void setDisponivel(boolean disponivel) {
+            this.disponivel = disponivel;
+        }
+
+        @Override
+        public String toString() {
+
+            return "\nID: " + id +
+                   "\nTítulo: " + titulo +
+                   "\nAutor: " + autor +
+                   "\nGênero: " + genero +
+                   "\nAno: " + ano +
+                   "\nDisponível: " + (disponivel ? "Sim" : "Não");
+        }
     }
-    
-    salvar_usuarios(usuarios)
-    print("✅ Cadastro realizado com sucesso!")
 
-def login():
-    """Função para fazer login"""
-    print("\n" + "="*50)
-    print("LOGIN")
-    print("="*50)
-    
-    usuarios = carregar_usuarios()
-    
-    if not usuarios:
-        print("❌ Nenhum usuário cadastrado!")
-        return False
-    
-    email = input("Email: ").strip()
-    senha = input("Senha: ").strip()
-    
-    if email in usuarios and usuarios[email]["senha"] == senha:
-        print(f"✅ Bem-vindo, {usuarios[email]['nome']}!")
-        return True
-    else:
-        print("❌ Email ou senha incorretos!")
-        return False
+    // =========================
+    // CLASSE SERVICE
+    // =========================
+    static class LivroService {
 
-def menu():
-    """Menu principal"""
-    while True:
-        print("\n" + "="*50)
-        print("SISTEMA DE CADASTRO E LOGIN")
-        print("="*50)
-        print("1. Cadastrar")
-        print("2. Login")
-        print("3. Sair")
-        print("="*50)
-        
-        opcao = input("Escolha uma opção: ").strip()
-        
-        if opcao == "1":
-            cadastro()
-        elif opcao == "2":
-            login()
-        elif opcao == "3":
-            print("👋 Até logo!")
-            break
-        else:
-            print("❌ Opção inválida!")
+        private ArrayList<Livro> livros = new ArrayList<>();
 
-if __name__ == "__main__":
-    menu()
+        public void cadastrarLivro(Livro livro) {
+
+            livros.add(livro);
+        }
+
+        public void listarLivros() {
+
+            if (livros.isEmpty()) {
+
+                System.out.println("\nNenhum livro cadastrado.");
+                return;
+            }
+
+            for (Livro livro : livros) {
+
+                System.out.println(livro);
+                System.out.println("----------------------------");
+            }
+        }
+
+        public Livro buscarPorId(int id) {
+
+            for (Livro livro : livros) {
+
+                if (livro.getId() == id) {
+
+                    return livro;
+                }
+            }
+
+            return null;
+        }
+
+        public boolean excluirLivro(int id) {
+
+            Livro livro = buscarPorId(id);
+
+            if (livro != null) {
+
+                livros.remove(livro);
+                return true;
+            }
+
+            return false;
+        }
+
+        public void buscarPorTitulo(String titulo) {
+
+            boolean encontrado = false;
+
+            for (Livro livro : livros) {
+
+                if (livro.getTitulo().equalsIgnoreCase(titulo)) {
+
+                    System.out.println(livro);
+                    encontrado = true;
+                }
+            }
+
+            if (!encontrado) {
+
+                System.out.println("\nLivro não encontrado.");
+            }
+        }
+    }
+
+    // =========================
+    // MAIN
+    // =========================
+    public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+        LivroService service = new LivroService();
+
+        int opcao;
+
+        do {
+
+            System.out.println("\n==============================");
+            System.out.println("   CONTROLE DE LIVROS");
+            System.out.println("==============================");
+            System.out.println("1 - Cadastrar livro");
+            System.out.println("2 - Listar livros");
+            System.out.println("3 - Editar livro");
+            System.out.println("4 - Excluir livro");
+            System.out.println("5 - Buscar livro");
+            System.out.println("0 - Sair");
+            System.out.print("Escolha uma opção: ");
+
+            opcao = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (opcao) {
+
+                case 1:
+
+                    System.out.print("\nTítulo: ");
+                    String titulo = scanner.nextLine();
+
+                    System.out.print("Autor: ");
+                    String autor = scanner.nextLine();
+
+                    System.out.print("Gênero: ");
+                    String genero = scanner.nextLine();
+
+                    System.out.print("Ano: ");
+                    int ano = scanner.nextInt();
+                    scanner.nextLine();
+
+                    Livro livro = new Livro(titulo, autor, genero, ano);
+
+                    service.cadastrarLivro(livro);
+
+                    System.out.println("\nLivro cadastrado com sucesso!");
+                    break;
+
+                case 2:
+
+                    service.listarLivros();
+                    break;
+
+                case 3:
+
+                    System.out.print("\nDigite o ID do livro: ");
+                    int idEditar = scanner.nextInt();
+                    scanner.nextLine();
+
+                    Livro livroEditar = service.buscarPorId(idEditar);
+
+                    if (livroEditar != null) {
+
+                        System.out.print("Novo título: ");
+                        livroEditar.setTitulo(scanner.nextLine());
+
+                        System.out.print("Novo autor: ");
+                        livroEditar.setAutor(scanner.nextLine());
+
+                        System.out.print("Novo gênero: ");
+                        livroEditar.setGenero(scanner.nextLine());
+
+                        System.out.print("Novo ano: ");
+                        livroEditar.setAno(scanner.nextInt());
+                        scanner.nextLine();
+
+                        System.out.println("\nLivro atualizado com sucesso!");
+
+                    } else {
+
+                        System.out.println("\nLivro não encontrado!");
+                    }
+
+                    break;
+
+                case 4:
+
+                    System.out.print("\nDigite o ID do livro: ");
+                    int idExcluir = scanner.nextInt();
+
+                    boolean removido = service.excluirLivro(idExcluir);
+
+                    if (removido) {
+
+                        System.out.println("\nLivro removido com sucesso!");
+
+                    } else {
+
+                        System.out.println("\nLivro não encontrado!");
+                    }
+
+                    break;
+
+                case 5:
+
+                    System.out.print("\nDigite o título do livro: ");
+                    String busca = scanner.nextLine();
+
+                    service.buscarPorTitulo(busca);
+
+                    break;
+
+                case 0:
+
+                    System.out.println("\nSistema encerrado!");
+                    break;
+
+                default:
+
+                    System.out.println("\nOpção inválida!");
+            }
+
+        } while (opcao != 0);
+
+        scanner.close();
+    }
+}
